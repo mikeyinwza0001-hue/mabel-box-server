@@ -1,47 +1,51 @@
-# Server jar (downloaded via PaperMC API)
-paper.jar
+# Minecraft Server — .gitignore
 
-# World data
-world/
-world_nether/
-world_the_end/
+# Sensitive / Private Data
+ops.json
+whitelist.json
+banned-players.json
+banned-ips.json
+usercache.json
+server.properties
+.console_history
 
-# Caches & libraries
-cache/
-libraries/
-versions/
+# Plugin secrets
+plugins/MabelBedrock/config.yml
+
+# Logs & Cache
 logs/
+cache/
+versions/
+libraries/
 
-# Plugin jars (downloaded separately)
-plugins/*.jar
+# Generated / Runtime
 plugins/.paper-remapped/
 plugins/bStats/
 plugins/spark/
 
-# Plugin data folders (keep config only)
-plugins/ModelEngine/
-plugins/ServerTap/
-plugins/SkBee/
-plugins/Skript/
-plugins/ViaBackwards/
-plugins/ViaVersion/
+# Server JAR (large binary, downloaded via PaperMC API)
+paper.jar
 
-# Runtime files
-.console_history
-usercache.json
-version_history.json
-eula.txt
-permissions.yml
+# Plugin JARs (large binaries, included in release bundle)
+plugins/*.jar
 
-# User data
-banned-ips.json
-banned-players.json
-whitelist.json
-ops.json
+# Bundled runtime binaries
+jre/
 
-# IDE / agents
+# Dev / IDE
+.vscode/
 .agents/
 .windsurf/
-
-# Backup
 backup dont push/
+
+# Node modules
+node_modules/
+**/node_modules/
+
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Release artifacts
+release/

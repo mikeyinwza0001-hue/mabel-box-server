@@ -1,0 +1,44 @@
+port: 4567
+debug: false
+useKeyAuth: true
+key: 'change_me'
+normalizeMessages: true
+
+# TLS (a.k.a. SSL) options
+tls:
+  # Set to true to enable TLS
+  enabled: false
+  # The path to your keystore (relative to ServerTap's plugin dir)
+  keystore: keystore.jks
+  # The password for the keystore
+  keystorePassword: ""
+  # Enforce Server Name Indication (SNI) or not
+  sni: false
+
+# Use this list to set allowed CORS Origins ("*" by default)
+corsOrigins:
+  - "*"
+
+# Example webhook configuration
+#webhooks:
+#  default:
+#    listener: "https://your-webhook-target.com/whatever"
+#    events:
+#      - PlayerJoin
+#      - PlayerQuit
+#      - PlayerKick
+#      - PlayerDeath
+#      - PlayerChat
+
+# Number of console log lines to send when websocket connections are opened
+# Set to 0 to effectively disable this
+websocketConsoleBuffer: 1000
+
+# If you do not wish to show the swagger UI you can disable it here
+disable-swagger: false
+
+# Use this feature to configure paths that will be blocked. Put in the exact paths shown by swagger.
+blocked-paths:
+# - /v1/ping
+# - /v1/players/{uuid}
+# - /v1/server/*
