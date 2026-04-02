@@ -1,0 +1,47 @@
+# Server jar (downloaded via PaperMC API)
+paper.jar
+
+# World data
+world/
+world_nether/
+world_the_end/
+
+# Caches & libraries
+cache/
+libraries/
+versions/
+logs/
+
+# Plugin jars (downloaded separately)
+plugins/*.jar
+plugins/.paper-remapped/
+plugins/bStats/
+plugins/spark/
+
+# Plugin data folders (keep config only)
+plugins/ModelEngine/
+plugins/ServerTap/
+plugins/SkBee/
+plugins/Skript/
+plugins/ViaBackwards/
+plugins/ViaVersion/
+
+# Runtime files
+.console_history
+usercache.json
+version_history.json
+eula.txt
+permissions.yml
+
+# User data
+banned-ips.json
+banned-players.json
+whitelist.json
+ops.json
+
+# IDE / agents
+.agents/
+.windsurf/
+
+# Backup
+backup dont push/
