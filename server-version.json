@@ -1,1 +1,1 @@
-{"version":"1.5.1","mc_version":"1.21.1","description":"Mabel Bedrock Box Server","changelog":"v1.5.1 - /mbbr block now uses BlockDisplay with client-side teleport interpolation so blocks glide smoothly instead of teleporting frame-by-frame (MabelBedrock v2.4.1)"}
+{"version":"1.6.0","mc_version":"1.21.1","description":"Mabel Bedrock Box Server","changelog":"v1.6.0 - Fix post-win resize cancelled by interior break, silent queuing for /mbbr block, /mbbr block glass|random|bedrock wall-material subcommand (MabelBedrock v2.5.0)"}
