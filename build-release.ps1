@@ -88,6 +88,36 @@ foreach ($f in $sensitivePluginFiles) {
     if (Test-Path $f) { Remove-Item $f -Force }
 }
 
+# ─── Strip cache/runtime folders inside plugins ───────
+# Top-level $excludeDirs only checks the root, so nested excludes like
+# "plugins\.paper-remapped" never match in the copy loop. Clean them here.
+$nestedExcludeDirs = @(
+    "$tempDir\plugins\.paper-remapped",
+    "$tempDir\plugins\bStats",
+    "$tempDir\plugins\spark"
+)
+foreach ($d in $nestedExcludeDirs) {
+    if (Test-Path $d) { Remove-Item $d -Recurse -Force }
+}
+
+# ─── Keep only the newest MabelBedrock-*.jar in plugins/ ──
+# Avoid shipping stale plugin jars (e.g. an older MabelBedrock-2.5.x.jar that
+# the user forgot to delete locally).
+$mbbJars = Get-ChildItem -LiteralPath "$tempDir\plugins" -Filter "MabelBedrock-*.jar" -File -ErrorAction SilentlyContinue
+if ($mbbJars -and $mbbJars.Count -gt 1) {
+    $sorted = $mbbJars | Sort-Object {
+        if ($_.Name -match 'MabelBedrock-(\d+)\.(\d+)\.(\d+)\.jar') {
+            [int]$matches[1] * 1000000 + [int]$matches[2] * 1000 + [int]$matches[3]
+        } else { 0 }
+    } -Descending
+    $keep = $sorted[0].Name
+    foreach ($j in $sorted | Select-Object -Skip 1) {
+        Write-Host "  - dropping stale plugin: $($j.Name)" -ForegroundColor DarkYellow
+        Remove-Item $j.FullName -Force
+    }
+    Write-Host "  - keeping plugin: $keep" -ForegroundColor DarkGreen
+}
+
 # ─── Copy template as server.properties ───────────────
 if (Test-Path ".\server.properties.template") {
     Copy-Item ".\server.properties.template" "$tempDir\server.properties" -Force
