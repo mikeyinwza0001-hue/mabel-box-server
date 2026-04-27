@@ -100,9 +100,46 @@ if (Test-Path ".\server.properties.template") {
 "[]" | Set-Content "$tempDir\banned-ips.json"
 
 # ─── Create zip ───────────────────────────────────────
+# NOTE: We intentionally do NOT use Compress-Archive — it stores entries with
+# backslash path separators, which Expand-Archive on the client side then
+# mis-handles (jar files get silently dropped when a sibling directory with the
+# same prefix also exists). Use .NET's ZipFile.CreateFromDirectory instead,
+# which writes spec-compliant forward-slash entries.
 Write-Host "Creating $zipName..." -ForegroundColor Yellow
 $zipPath = "$OutputDir\$zipName"
-Compress-Archive -Path "$tempDir\*" -DestinationPath $zipPath -Force
+$absZipPath = [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $zipPath))
+$absTempDir = [System.IO.Path]::GetFullPath((Join-Path (Get-Location) $tempDir))
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+if (Test-Path $absZipPath) { Remove-Item $absZipPath -Force }
+
+# Manually build the archive so entry names are guaranteed to use '/' (per zip
+# spec). Some .NET Framework versions still write '\' in CreateFromDirectory,
+# which breaks Expand-Archive on the client (silently drops files when a
+# sibling directory exists).
+$fs = [System.IO.File]::Open($absZipPath, [System.IO.FileMode]::Create)
+try {
+    $archive = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        $baseLen = $absTempDir.Length
+        if (-not $absTempDir.EndsWith([System.IO.Path]::DirectorySeparatorChar)) { $baseLen++ }
+
+        Get-ChildItem -LiteralPath $absTempDir -Recurse -Force | ForEach-Object {
+            $rel = $_.FullName.Substring($baseLen).Replace('\', '/')
+            if ($_.PSIsContainer) {
+                # Directory entry (trailing slash, no content)
+                [void]$archive.CreateEntry($rel + '/')
+            } else {
+                $entry = $archive.CreateEntry($rel, [System.IO.Compression.CompressionLevel]::Optimal)
+                $entryStream = $entry.Open()
+                try {
+                    $fileStream = [System.IO.File]::OpenRead($_.FullName)
+                    try { $fileStream.CopyTo($entryStream) } finally { $fileStream.Dispose() }
+                } finally { $entryStream.Dispose() }
+            }
+        }
+    } finally { $archive.Dispose() }
+} finally { $fs.Dispose() }
 
 # Cleanup temp
 Remove-Item $tempDir -Recurse -Force
