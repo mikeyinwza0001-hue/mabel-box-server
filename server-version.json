@@ -1,1 +1,0 @@
-{"version":"1.7.0","mc_version":"1.21.1","description":"Mabel Bedrock Box Server","changelog":"v1.7.0 - /mbbr block now stacks: repeated invocations append seamlessly to the running animation tail with no gap. Faster timings (fall 14->10 ticks, stagger 2->1) for snappier feel (MabelBedrock v2.6.0)"}
